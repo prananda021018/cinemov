@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CineTrends — Streaming Picks</title>
+  <meta name="description" content="CineTrends — Kumpulan poster film berkualitas, trailer, dan rekomendasi film populer. Tampilan streaming modern untuk menonton info film.">
+  <meta property="og:title" content="CineTrends — Streaming Picks">
+  <meta property="og:description" content="Temukan poster-film berkualitas, lihat trailer, dan dapatkan rekomendasi film terbaik.">
+  <meta property="og:image" content="https://image.tmdb.org/t/p/original/8eCIrN9FkF9T9PYnDq1PzFqFQ6z.jpg">
+  <meta property="og:type" content="website">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#040406;
+      --card:#0f0f12;
+      --accent:#e50914;
+      --muted:#9aa0a6;
+      --glass: rgba(255,255,255,0.03);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background:linear-gradient(180deg,var(--bg),#070708 80%);
+      color:#fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    header{
+      position:sticky;top:0;z-index:60;
+      backdrop-filter: blur(6px);
+      background:linear-gradient(180deg, rgba(4,4,6,0.75), rgba(4,4,6,0.35));
+      display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid rgba(255,255,255,0.03);
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:42px;height:42px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#ff3366);display:flex;align-items:center;justify-content:center;font-weight:700;
+      box-shadow:0 6px 20px rgba(233,9,20,0.15);
+    }
+    .brand h1{font-size:1.1rem;margin:0;color:#fff;letter-spacing:0.2px}
+    nav a{color:var(--muted);text-decoration:none;margin-left:18px;font-weight:600}
+    nav a:hover{color:#fff}
+    .actions{display:flex;gap:12px;align-items:center}
+    .search{
+      background:var(--glass);padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;gap:8px;
+    }
+    .search input{background:transparent;border:0;outline:0;color:#ddd;font-size:0.95rem;width:180px}
+    .btn-smart{
+      background:var(--accent);color:#fff;padding:8px 14px;border-radius:8px;text-decoration:none;font-weight:700;box-shadow:0 6px 20px rgba(233,9,20,0.12)
+    }
+
+    /* Hero */
+    .hero{
+      display:grid;grid-template-columns:1fr 380px;gap:28px;padding:34px 28px 18px 28px;align-items:end;
+    }
+    .hero-card{position:relative;overflow:hidden;border-radius:12px;min-height:360px;background:linear-gradient(180deg,rgba(0,0,0,0.35),rgba(0,0,0,0.65));padding:26px 28px;display:flex;flex-direction:column;justify-content:flex-end}
+    .hero-card .title{font-size:2rem;font-weight:700;margin:0;color:#fff}
+    .hero-card .meta{color:var(--muted);margin-top:8px}
+    .hero-poster{position:absolute;right:-30px;top:-20px;width:420px;height:420px;object-fit:cover;border-radius:10px;transform:rotate(-6deg);box-shadow:0 20px 60px rgba(0,0,0,0.7)}
+    .hero-actions{margin-top:14px;display:flex;gap:12px}
+    .play-btn{background:#fff;color:#000;padding:10px 18px;border-radius:8px;font-weight:700;text-decoration:none;display:inline-flex;gap:10px;align-items:center}
+    .more-btn{background:transparent;border:1px solid rgba(255,255,255,0.08);padding:10px 14px;border-radius:8px;color:#fff;text-decoration:none;font-weight:600}
+
+    /* Rows */
+    .rows{padding:22px 28px}
+    .row-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .row-title h3{margin:0;font-size:1.05rem}
+    .row{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px}
+    .card{min-width:175px;background:var(--card);border-radius:10px;overflow:hidden;flex:0 0 auto;cursor:pointer;transition:transform .18s;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+    .card:hover{transform:translateY(-6px)}
+    .card img{width:100%;height:260px;object-fit:cover;display:block}
+    .card .info{padding:10px}
+    .card .info h4{margin:0;font-size:0.95rem;color:#fff}
+    .card .info p{color:var(--muted);font-size:0.85rem;margin:6px 0 0}
+
+    /* ad area */
+    .ad-row{display:flex;gap:12px;align-items:center;justify-content:center;padding:18px 28px}
+    .native-ad{width:100%;max-width:970px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.04)}
+    .native-ad iframe{width:100%;height:90px;border:0;display:block}
+
+    /* modal trailer */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.75);z-index:120}
+    .modal.open{display:flex}
+    .modal-content{width:90%;max-width:900px;background:#000;border-radius:10px;overflow:hidden}
+    .modal-content iframe{width:100%;height:520px;border:0;display:block}
+
+    /* info column */
+    .info-col{padding:18px;background:linear-gradient(180deg, transparent, rgba(5,5,5,0.6));border-radius:10px;color:#ddd}
+    .info-col h4{margin:0 0 6px;font-size:1rem}
+    .info-col p{color:var(--muted);margin:0 0 12px}
+
+    footer{padding:18px 28px;border-top:1px solid rgba(255,255,255,0.03);color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+
+    /* scrollbar tidy */
+    .row::-webkit-scrollbar{height:10px}
+    .row::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:8px}
+
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr;gap:14px}
+      .hero-poster{display:none}
+      .hero-card{min-height:260px}
+      .card img{height:200px}
+      .card{min-width:150px}
+      .modal-content iframe{height:360px}
+    }
+    @media (max-width:520px){
+      nav a{display:none}
+      .search input{width:90px}
+      .card img{height:170px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="logo">CT</div>
+      <div>
+        <h1>CineTrends</h1>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Streaming picks & trailers</div>
+      </div>
+    </div>
+
+    <nav aria-label="Main navigation">
+      <a href="#beranda">Beranda</a>
+      <a href="#popular">Popular</a>
+      <a href="#new">Terbaru</a>
+      <a href="#kontak">Kontak</a>
+    </nav>
+
+    <div class="actions">
+      <div class="search" role="search" aria-label="Search movies">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="opacity:.8"><path d="M21 21l-4.35-4.35" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="11" cy="11" r="6" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></circle></svg>
+        <input id="search" placeholder="Cari film..." />
+      </div>
+
+      <!-- SMART LINK CTA: GANTI href dengan Smart Link Adsterra kamu -->
+      <a id="smartLinkBtn" class="btn-smart" href="https://domicilesweetheart.com/tze6fpzg8?key=240aa2c9821f3de8a37977ad89762db6" target="_blank" rel="noopener">Dapatkan Penawaran</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="beranda" aria-labelledby="hero-title">
+    <div class="hero-card" role="region" aria-label="Featured movie">
+      <div style="z-index:2;position:relative">
+        <h2 class="title" id="hero-title">Joker: Folie à Deux</h2>
+        <div class="meta">⭐ 8.3  •  2025  •  Drama / Thriller</div>
+
+        <div class="hero-actions">
+          <a class="play-btn" href="#" data-trailer="https://www.youtube.com/embed/5f0n1xgQhVw"> ▶️ Putar Trailer</a>
+          <a class="more-btn" href="#popular">Lihat Koleksi</a>
+        </div>
+      </div>
+      <!-- Poster - dekoratif -->
+      <img class="hero-poster" src="https://image.tmdb.org/t/p/original/8eCIrN9FkF9T9PYnDq1PzFqFQ6z.jpg" alt="Joker: Folie à Deux poster">
+    </div>
+
+    <aside class="info-col" aria-labelledby="featured-info">
+      <h4 id="featured-info">Tentang Film</h4>
+      <p><strong>Joker: Folie à Deux</strong> mengikuti kelanjutan kisah Arthur Fleck dalam perpaduan musik, kegilaan, dan tragedi. Sutradara & pemeran utama kembali menghadirkan pengalaman sinematik yang intens.</p>
+
+      <h4>Kenapa Nonton?</h4>
+      <p>Penghargaan, akting kuat, dan visual memukau — cocok untuk penikmat film drama psikologis.</p>
+
+      <div style="margin-top:12px">
+        <strong>Genre:</strong> Drama, Thriller<br>
+        <strong>Durasi:</strong> 2h 30m<br>
+        <strong>Negara:</strong> USA
+      </div>
+    </aside>
+  </section>
+
+  <!-- NATIVE AD (ganti iframe src dengan kode/nilai Adsterra Native Banner) -->
+  <div class="ad-row" aria-hidden="true">
+    <div class="native-ad" role="region" aria-label="Advertisement">
+      <iframe src="<script async="async" data-cfasync="false" src="//domicilesweetheart.com/71cb07bda99f18721c034f9cefd38a56/invoke.js"></script>
+<div id="container-71cb07bda99f18721c034f9cefd38a56"></div>" title="Native Ad Placeholder"></iframe>
+    </div>
+  </div>
+
+  <!-- ROWS: Popular / New / Action etc -->
+  <main class="rows" id="content">
+
+    <div class="row-group" id="popular">
+      <div class="row-title">
+        <h3>Popular This Week</h3>
+        <div style="color:var(--muted);font-size:13px">Pilihan editor</div>
+      </div>
+      <div class="row" id="row-popular" tabindex="0" aria-label="Popular movies">
+        <!-- Cards will be injected by JS -->
+      </div>
+    </div>
+
+    <div class="row-group" id="new">
+      <div class="row-title">
+        <h3>New Releases</h3>
+        <div style="color:var(--muted);font-size:13px">Baru & hangat</div>
+      </div>
+      <div class="row" id="row-new" tabindex="0" aria-label="New releases">
+        <!-- Cards injected -->
+      </div>
+    </div>
+
+    <div class="row-group" id="action">
+      <div class="row-title">
+        <h3>Action & Blockbusters</h3>
+        <div style="color:var(--muted);font-size:13px">Ledakan & aksi</div>
+      </div>
+      <div class="row" id="row-action" tabindex="0" aria-label="Action movies">
+        <!-- Cards injected -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- CTA Smart Link besar di tengah -->
+  <section style="padding:18px 28px;text-align:center">
+    <!-- GANTI href di bawah dengan Smart Link mu -->
+    <a id="heroSmart" class="play-btn" href="https://domicilesweetheart.com/tze6fpzg8?key=240aa2c9821f3de8a37977ad89762db6" target="_blank" rel="noopener" style="font-size:1.05rem">
+      🎁 Klaim Penawaran Terbaik Sekarang
+    </a>
+  </section>
+
+  <!-- POPUNDER SCRIPT AREA -->
+  <!-- GANTI dengan script Popunder Adsterra (biasanya di sini) -->
+  <script>
+    // === POPUNDER PLACEHOLDER ===
+    // Ganti blok ini dengan script Popunder Adsterra kamu.
+    // Contoh: tempelkan code yang disediakan Adsterra untuk Popunder.
+    console.log("<script type='text/javascript' src='//domicilesweetheart.com/a9/78/55/a978553364827b7e7c6995bb322f2fe9.js'></script>");
+  </script>
+
+  <!-- TRAILER MODAL -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-label="Trailer">
+    <div class="modal-content" role="document" aria-hidden="false">
+      <button id="closeModal" aria-label="Tutup" style="position:absolute;right:12px;top:12px;background:transparent;border:none;color:#fff;font-size:20px;z-index:10;cursor:pointer">✕</button>
+      <iframe id="trailerFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <footer>
+    <div>© <span id="year"></span> CineTrends — Streaming Picks</div>
+    <div style="font-size:13px;color:var(--muted)">Made with ❤️ • Siap untuk Adsterra (Smart Link, Popunder, Native)</div>
+  </footer>
+
+  <!-- SCRIPTS: content, interactions -->
+  <script>
+    // --- SITE SETUP ---
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // --- MOVIE DATA (statis, mudah diganti) ---
+    // Gunakan poster resolusi tinggi (TMDb / CDN). Ganti sesuai kebutuhan.
+    const MOVIES = {
+      popular: [
+        { title:"Joker: Folie à Deux", year:2025, rating:8.3, genres:"Drama, Thriller", poster:"https://image.tmdb.org/t/p/w600_and_h900_bestv2/8eCIrN9FkF9T9PYnDq1PzFqFQ6z.jpg", trailer:"https://www.youtube.com/embed/5f0n1xgQhVw" },
+        { title:"Dune: Part Two", year:2024, rating:8.6, genres:"Sci-Fi, Adventure", poster:"https://image.tmdb.org/t/p/w600_and_h900_bestv2/9cJETuLMc6R0bTWRA5i7ctY9bxk.jpg", trailer:"https://www.youtube.com/embed/H3v2QjV6b0I" },
+        { title:"Deadpool & Wolverine", year:2024, rating:8.8, genres:"Action, Comedy", poster:"https://image.tmdb.org/t/p/w600_and_h900_bestv2/6t0SwOq0R8sH0UzZnIvmJ0F0GKU.jpg", trailer:"https://www.youtube.com/embed/7X3A3F5Wz_k" },
+        { title:"Inside Out 2", year:2024, rating:7.9, genres:"Animation, Family", poster:"https://image.tmdb.org/t/p/w600_and_h900_bestv2/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg", trailer:"https://www.youtube.com/embed/2fCh3vG6rks" }
+      ],
+      newReleases: [
+        { title:"Venom: The Last Dance", year:2024, rating:7.1, genres:"Action, Sci-Fi", poster:"https://image.tmdb.org/t/p/w600_and_h900_bestv2/bY2xO5B6vVhzlOKhHvJ3PjTz2E3.jpg", trailer:"https://www.youtube.com/embed/1q2r3t4u5v6" },
+        { title:"Kung Fu Panda 4", year:2024, rating:7.2, genres:"Animation, Adventure", poster:"https://image.tmdb.org/t/p/w600_and_h900_bestv2/dzBTihfGqYjHcYz2Zfph1spB5Kn.jpg", trailer:"https://www.youtube.com/embed/9n8m7k6j5h4" },
+        { title:"Oppenheimer", year:2023, rating:8.5, genres:"Drama, History", poster:"https://image.tmdb.org/t/p/w600_and_h900_bestv2/8QZF3bW5k6F3q1jM6jL9z5q2.jpg", trailer:"https://www.youtube.com/embed/sY1S34973zA" }
+      ],
+      action: [
+        { title:"Mad Max: The Wasteland", year:2025, rating:8.0, genres:"Action, Adventure", poster:"https://image.tmdb.org/t/p/w600_and_h900_bestv2/a1b2c3d4e5f6g7h8.jpg", trailer:"https://www.youtube.com/embed/abcd1234" },
+        { title:"Mission: Impossible 8", year:2025, rating:8.1, genres:"Action, Thriller", poster:"https://image.tmdb.org/t/p/w600_and_h900_bestv2/mis8poster.jpg", trailer:"https://www.youtube.com/embed/mi8trail" }
+      ]
+    };
+
+    // --- RENDERING HELPERS ---
+    function createCard(movie){
+      const el = document.createElement('div');
+      el.className = 'card';
+      el.innerHTML = `
+        <img loading="lazy" decoding="async" src="${movie.poster}" alt="${escapeHtml(movie.title)} poster">
+        <div class="info">
+          <h4>${escapeHtml(movie.title)}</h4>
+          <p>⭐ ${movie.rating} • ${movie.year}</p>
+        </div>
+      `;
+      // open trailer modal on click
+      el.addEventListener('click', () => openTrailer(movie.trailer || ''));
+      return el;
+    }
+
+    function populateRow(containerId, list){
+      const container = document.getElementById(containerId);
+      list.forEach(m => container.appendChild(createCard(m)));
+    }
+
+    // initial populate
+    populateRow('row-popular', MOVIES.popular);
+    populateRow('row-new', MOVIES.newReleases);
+    populateRow('row-action', MOVIES.action);
+
+    // --- SEARCH (client-side, static) ---
+    document.getElementById('search').addEventListener('input', function(e){
+      const q = this.value.trim().toLowerCase();
+      if(!q){ // reset
+        document.getElementById('row-popular').innerHTML=''; populateRow('row-popular', MOVIES.popular);
+        document.getElementById('row-new').innerHTML=''; populateRow('row-new', MOVIES.newReleases);
+        document.getElementById('row-action').innerHTML=''; populateRow('row-action', MOVIES.action);
+        return;
+      }
+      // simple filter across all arrays
+      const all = [...MOVIES.popular, ...MOVIES.newReleases, ...MOVIES.action];
+      const filtered = all.filter(m => m.title.toLowerCase().includes(q) || (m.genres && m.genres.toLowerCase().includes(q)));
+      // put all results into the popular row for visibility
+      document.getElementById('row-popular').innerHTML='';
+      filtered.slice(0,20).forEach(m=> document.getElementById('row-popular').appendChild(createCard(m)));
+      document.getElementById('row-new').innerHTML='';
+      document.getElementById('row-action').innerHTML='';
+    });
+
+    // --- MODAL TRAILER ---
+    const modal = document.getElementById('modal');
+    const trailerFrame = document.getElementById('trailerFrame');
+    const closeModal = document.getElementById('closeModal');
+
+    function openTrailer(youtubeUrl){
+      if(!youtubeUrl) return;
+      trailerFrame.src = youtubeUrl + "?autoplay=1&rel=0";
+      modal.classList.add('open');
+    }
+    closeModal.addEventListener('click', closeTrailer);
+    modal.addEventListener('click', (e)=> { if(e.target===modal) closeTrailer(); });
+    function closeTrailer(){
+      modal.classList.remove('open');
+      trailerFrame.src = "";
+    }
+
+    // hero play button
+    document.querySelectorAll('.play-btn').forEach(btn=>{
+      btn.addEventListener('click', function(e){
+        const t = this.getAttribute('data-trailer');
+        if(t){ e.preventDefault(); openTrailer(t); }
+      });
+    });
+
+    // small XSS-safe escape for titles
+    function escapeHtml(str){ return String(str).replace(/[&<>"']/g, (s)=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+
+    // --- OPTIONAL: Smart Link click tracking (open in new tab + popunder hook) ---
+    document.getElementById('smartLinkBtn').addEventListener('click', function(){
+      // You can add any pre-click tracking logic here.
+      // Note: do NOT auto-redirect users without click — obey Adsterra rules.
+    });
+
+    // === END SCRIPT ===
+  </script>
+
+  <!-- Structured data (schema.org) for site (basic) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebSite",
+    "name":"CineTrends",
+    "url":".",
+    "description":"Portal film modern dengan koleksi poster, trailer, dan rekomendasi film."
+  }
+  </script>
+
+</body>
+</html>
